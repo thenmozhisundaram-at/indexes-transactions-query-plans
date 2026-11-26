@@ -1,0 +1,22 @@
+INDEXES, TRANSACTIONS AND QUERY PLANS
+==========================================
+Rows inserted: 100,000
+Query: SELECT ... FROM orders WHERE customer_id = 4242
+
+1) QUERY PLAN BEFORE INDEX
+2 | 0 | 0 | SCAN orders
+Average query time before index: 3.0646 ms
+
+2) CREATE INDEX AND QUERY PLAN AFTER INDEX
+3 | 0 | 0 | SEARCH orders USING INDEX idx_orders_customer_id (customer_id=?)
+Average query time after index:  0.0126 ms
+Speed ratio (before / after): 242.46x
+
+3) TRANSACTION ROLLBACK
+Status before transaction: complete
+Status inside transaction: cancelled
+Status after ROLLBACK: complete
+Rollback successful: True
+
+Result: the index changes the query plan, and ROLLBACK
+restores the original row value after an uncommitted update.
